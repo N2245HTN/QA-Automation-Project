@@ -1,20 +1,14 @@
-describe('Using Fixtures', () => {
+describe("Using Fixtures", () => {
+  it("logs in using fixture data", () => {
+    cy.fixture("testData").then((user) => {
+      cy.visit("https://www.saucedemo.com/");
 
-  it('logs in using fixture data', () => {
+      cy.get('[data-test="username"]').type(user.username);
+      cy.get('[data-test="password"]').type(user.password);
 
-    cy.fixture('user').then((user) => {
+      cy.get('[data-test="login-button"]').click();
 
-      cy.visit('https://the-internet.herokuapp.com/login')
-
-      cy.get('#username').type(user.username)
-      cy.get('#password').type(user.password)
-
-      cy.get('button[type="submit"]').click()
-
-      cy.url().should('include', user.expectedUrl)
-
-    })
-
-  })
-
-})
+      cy.url().should("include", "/inventory.html");
+    });
+  });
+});

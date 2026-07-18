@@ -1,14 +1,7 @@
-describe('Custom Commands', () => {
+describe("Custom Commands", () => {
+  it("uses the custom login command", () => {
+    cy.login("standard_user", "secret_sauce");
 
-  it('uses the custom login command', () => {
-
-    cy.login('tomsmith', 'SuperSecretPassword!')
-
-    cy.url().should('include', '/secure')
-
-    cy.get('.flash.success')
-      .should('be.visible')
-
-  })
-
-})
+    cy.url().should("include", "/inventory.html");
+  });
+});
