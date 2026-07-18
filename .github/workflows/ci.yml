@@ -7,6 +7,7 @@ on:
     branches: [main]
 
 jobs:
+
   cypress-tests:
     runs-on: ubuntu-latest
 
@@ -17,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install Cypress dependencies
         working-directory: Cypress/cypress-demo
@@ -26,6 +27,7 @@ jobs:
       - name: Run Cypress tests
         working-directory: Cypress/cypress-demo
         run: npx cypress run
+
 
   postman-tests:
     runs-on: ubuntu-latest
@@ -39,3 +41,33 @@ jobs:
 
       - name: Run Postman API tests
         run: newman run "Postman/My Collection.postman_collection (1).json"
+
+
+  performance-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Lighthouse
+        run: npm install -g lighthouse
+
+      - name: Run Lighthouse Performance Test
+        run: lighthouse https://www.saucedemo.com/ --output=json --output-path=./lighthouse-report.json --chrome-flags="--headless"
+
+
+  security-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Security Scan
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
