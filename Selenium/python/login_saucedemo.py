@@ -4,23 +4,32 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-# start browser
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
-driver.maximize_window()
+# Chrome options for GitHub Actions / CI environment
+options = webdriver.ChromeOptions()
+options.add_argument("--headless=new")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--window-size=1920,1080")
 
-# open website
-driver.get("https://www.saucedemo.com/")
+# Start Chrome
+driver = webdriver.Chrome(
+    service=Service(ChromeDriverManager().install()),
+    options=options
+)
 
-# login
-driver.find_element(By.ID, "user-name").send_keys("standard_user")
-driver.find_element(By.ID, "password").send_keys("secret_sauce")
-driver.find_element(By.ID, "login-button").click()
+try:
+    # Open SauceDemo
+    driver.get("https://www.saucedemo.com/")
 
-# wait to see result
-time.sleep(3)
+    # Login
+    driver.find_element(By.ID, "user-name").send_keys("standard_user")
+    driver.find_element(By.ID, "password").send_keys("secret_sauce")
+    driver.find_element(By.ID, "login-button").click()
 
-# check page title (dashboard opened or not)
-print("Page Title:", driver.title)
+    # Verify successful login
+    assert "inventory.html" in driver.current_url
 
-# close browser
-driver.quit()
+    print("Login test passed successfully!")
+
+finally:
+    driver.quit()
